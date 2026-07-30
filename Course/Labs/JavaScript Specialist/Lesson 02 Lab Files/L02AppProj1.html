@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Lesson 1 Application Project 1</title>
+		
+	  <script>
+		let string1;
+		let string2;
+		let string3;
+		let string4;
+		string1 = "start";
+		string4 = "end";
+		const val = prompt("Please enter some text");
+		if (val !== null) {
+		string2 = val;
+		}
+		const r = confirm("Press a button!");
+		// r is true or false, just assign it directly as string
+		string3 = r.toString();
+
+		// Note how the prompt and confirm methods are used
+	  </script>
+
+	</head>
+
+	<body>
+	  <h3>Hellow World</h3>
+	  <div id="output"></div>
+
+	  <script>
+		const outputDiv = document.getElementById("output");
+		const finalString = `${string1} ${string2} ${string3} ${string4}`;
+
+		// Using textContent or innerText to add content safely
+		outputDiv.innerHTML = `
+		<p>${finalString}</p>
+		<p>${string1}</p>
+		<p>${string2}</p>
+		<p>${string3}</p>
+		<p>${string4}</p>
+		`;
+	  </script>
+	  
+	</body>
+</html>

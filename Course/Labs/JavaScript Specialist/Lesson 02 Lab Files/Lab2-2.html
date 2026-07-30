@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+		<title>Lab 2-2</title>
+	</head>
+
+	<body>
+	  <h3>CIW JavaScript Specialist</h3>
+	  <hr>
+	  <p id="welcomeMessage"></p> <!-- Placeholder for welcome message -->
+	  <script>
+		// Create a variable named userName and assign it the value from prompt()
+		let userName;
+		userName = prompt("What is your name?");
+		// Insert the welcomeMessage using document.getElementById
+		welcomeMessage = document.getElementById("welcomeMessage")
+		welcomeMessage.innerHTML = "Welcome, " + userName + "!";
+	  </script>
+	</body>
+</html>
