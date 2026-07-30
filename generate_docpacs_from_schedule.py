@@ -235,6 +235,8 @@ def create_coursework_folders(parent: Path, coursework_items: list[str]) -> list
         folder = parent / safe_folder_name(item)
         folder.mkdir(parents=False, exist_ok=True)
         created.append(folder)
+        txt_file = folder / f"{folder.name}.txt"
+        txt_file.touch(exist_ok=True)
 
     return created
 
