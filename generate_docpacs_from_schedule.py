@@ -67,6 +67,9 @@ def first_existing(directory: Path, names: Iterable[str]) -> Path:
 def parse_args() -> argparse.Namespace:
     script_dir = Path(__file__).resolve().parent
 
+    schedule_dir = script_dir / "Course" / "Information"
+    docpac_dir = script_dir / "Course" / "Templates"
+
     parser = argparse.ArgumentParser(
         description=(
             "Rebuild future DocPacs from a template and schedule, populate the "
@@ -77,27 +80,25 @@ def parse_args() -> argparse.Namespace:
         "--root",
         type=Path,
         default=script_dir,
-        help="Folder containing docpac_XXXXXX subfolders (default: script folder).",
+        help="Folder containing docpac_XXXXXX subfolders.",
     )
+
     parser.add_argument(
         "--schedule",
         type=Path,
         default=first_existing(
-            script_dir,
-            ("Schedule(2).xlsx", "Schedule.xlsx", "Schedule(1).xlsx"),
+            schedule_dir,
+            ("Schedule.xlsx",),
         ),
         help="Excel schedule file.",
     )
+
     parser.add_argument(
         "--template",
         type=Path,
         default=first_existing(
-            script_dir,
-            (
-                "docpac_template(1).docx",
-                "docpac_template.docx",
-                "docpac_template(2).docx",
-            ),
+            docpac_dir,
+            ("docpac_template.docx",),
         ),
         help="Word DocPac template.",
     )
@@ -212,6 +213,30 @@ def split_assignment_cell(value: Any) -> list[str]:
         for raw_line in text.split("\n")
         if (item := clean_item(raw_line))
     ]
+
+
+def safe_folder_name(text: str) -> str:
+    """
+    Convert spreadsheet text into a valid Windows folder name.
+
+    Invalid filename characters are replaced with underscores, and trailing
+    spaces or periods are removed.
+    """
+    cleaned = re.sub(r'[<>:"/\\|?*]', "_", text).strip().rstrip(". ")
+    if cleaned in {"", ".", ".."}:
+        raise ValueError(f"invalid Coursework folder name: {text!r}")
+    return cleaned
+
+
+def create_coursework_folders(parent: Path, coursework_items: list[str]) -> list[Path]:
+    created: list[Path] = []
+
+    for item in coursework_items:
+        folder = parent / safe_folder_name(item)
+        folder.mkdir(parents=False, exist_ok=True)
+        created.append(folder)
+
+    return created
 
 
 def normalized_key(text: str) -> str:
@@ -399,7 +424,6 @@ def fill_schedule_table(
     week: Any,
     due_date: Any,
     days: Any,
-    events: Any,
     workbook_epoch: datetime,
 ) -> None:
     table = next(
@@ -407,8 +431,8 @@ def fill_schedule_table(
             candidate
             for candidate in document.tables
             if candidate.rows
-            and [cell.text.strip() for cell in candidate.rows[0].cells[:5]]
-            == ["Quarter", "Week", "Due", "Days", "Events"]
+            and [cell.text.strip() for cell in candidate.rows[0].cells[:4]]
+            == ["Quarter", "Week", "Due", "Days"]
         ),
         None,
     )
@@ -420,9 +444,8 @@ def fill_schedule_table(
         plain_number(week),
         format_due_date(due_date, workbook_epoch),
         plain_number(days),
-        "" if events is None else str(events).strip(),
     )
-    for cell, value in zip(table.rows[1].cells[:5], values):
+    for cell, value in zip(table.rows[1].cells[:4], values):
         set_cell_text(cell, value)
 
 
@@ -652,10 +675,8 @@ def get_headers(worksheet: Any) -> dict[str, int]:
             "The schedule is missing required column(s): " + ", ".join(missing)
         )
 
-    if "certification" not in headers and "coursework" not in headers:
-        raise RuntimeError(
-            "The schedule must contain either a Certification or Coursework column."
-        )
+    if "coursework" not in headers:
+        raise RuntimeError("The schedule is missing the required Coursework column.")
     return headers
 
 
@@ -663,9 +684,8 @@ def row_value(row: tuple[Any, ...], headers: dict[str, int], name: str) -> Any:
     return row[headers[name] - 1].value
 
 
-def certification_row_value(row: tuple[Any, ...], headers: dict[str, int]) -> Any:
-    column_name = "certification" if "certification" in headers else "coursework"
-    return row_value(row, headers, column_name)
+def coursework_row_value(row: tuple[Any, ...], headers: dict[str, int]) -> Any:
+    return row_value(row, headers, "coursework")
 
 
 def iter_schedule_rows(worksheet: Any, headers: dict[str, int]) -> Iterable[dict[str, Any]]:
@@ -682,9 +702,10 @@ def iter_schedule_rows(worksheet: Any, headers: dict[str, int]) -> Iterable[dict
 
         junior_items = split_assignment_cell(row_value(row, headers, "juniors"))
         senior_items = split_assignment_cell(row_value(row, headers, "seniors"))
-        certification_items = split_assignment_cell(
-            certification_row_value(row, headers)
+        coursework_items = split_assignment_cell(
+            coursework_row_value(row, headers)
         )
+        event_items = split_assignment_cell(row_value(row, headers, "events"))
         note_items = split_assignment_cell(row_value(row, headers, "notes"))
 
         yield {
@@ -694,15 +715,15 @@ def iter_schedule_rows(worksheet: Any, headers: dict[str, int]) -> Iterable[dict
             "week": row_value(row, headers, "week"),
             "date": row_value(row, headers, "date"),
             "days": row_value(row, headers, "days"),
-            "events": row_value(row, headers, "events"),
+            "event_items": event_items,
             "junior_items": junior_items,
             "senior_items": senior_items,
-            "certification_items": certification_items,
+            "coursework_items": coursework_items,
             "note_items": note_items,
             "assignments": build_assignments(
                 junior_items,
                 senior_items,
-                certification_items,
+                coursework_items,
             ),
         }
 
@@ -766,7 +787,8 @@ def main() -> int:
         if args.dry_run:
             print(
                 f"Would rebuild {output_path.relative_to(root)} with "
-                f"{len(item['assignments'])} assignment rubric(s)."
+                f"{len(item['assignments'])} assignment rubric(s) and create "
+                f"{len(item['coursework_items'])} Coursework folder(s)."
             )
             continue
 
@@ -783,8 +805,13 @@ def main() -> int:
                 item["week"],
                 item["date"],
                 item["days"],
-                item["events"],
                 workbook.epoch,
+            )
+            fill_optional_bullet_section(
+                document,
+                "Events:",
+                "Notes:",
+                item["event_items"],
             )
             fill_optional_bullet_section(
                 document,
@@ -798,13 +825,15 @@ def main() -> int:
 
             output_path.unlink(missing_ok=True)
             temporary_path.replace(output_path)
+            create_coursework_folders(folder, item["coursework_items"])
         except Exception:
             temporary_path.unlink(missing_ok=True)
             raise
 
         print(
             f"Created {output_path.relative_to(root)} "
-            f"({len(item['assignments'])} assignments)."
+            f"({len(item['assignments'])} assignments, "
+            f"{len(item['coursework_items'])} Coursework folders)."
         )
         created += 1
 
@@ -820,5 +849,6 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
 
 
