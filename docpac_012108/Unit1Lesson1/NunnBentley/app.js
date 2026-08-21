@@ -5,3 +5,6 @@ var num2 = 2
 console.log(num1 + num2)
 console.log("that is correct")
 console.log("good job!")
+console.log(67)
+let abestupid = true
+console.log(abestupid)
