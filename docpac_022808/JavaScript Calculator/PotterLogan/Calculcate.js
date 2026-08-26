@@ -1,27 +1,40 @@
 function Calculate(){
 
-num1 = Number(document.getElementById("num1").V)
-num2 = Number(document.getElementById(num2))
-operation =(document.getElementById(operation))
 
-switch(String(operation)){
+number1 = document.getElementById("num1").value
+number2 = document.getElementById("num2").value
+operator =(document.getElementById("operation").value)
+
+console.log("num1=" + number1 + " num2=" + number2 + " operation=" + operator)
+
+if(number1 != "" && number2 != ""){
+    number1 = Number(number1)
+    number2 = Number(number2)
+    switch(String(operator)){
 
 
-    case "*":
-        output = num1 * num2
-        break;
-    case "/":
-        if(num2 != 0){ output = num1 / num2 } else output = "Error!"
-        break;
-    case "+":
-        output = num1 + num2
-        break;
-    case "-":
-        output = num1 - num2        
-}
+        case "Multiply":
+            output = number1 * number2
+            break;
+        case "Divide":
+            if(number2 != 0){ output = number1 / number2 } else output = "Error!"
+            break;
+        case "Add":
+            output = number1 + number2
+            break;
+        case "Subtract":
+            output = number1 - number2
+            break;
+        case "Modulo":
+            if(number2 != 0){output = number1 % number2} else output = "Error!"
+            break;
+    }
 
-//document.getElementById("result").textContent = String(output)
+    console.log("num1=" + number1 + " num2=" + number2 + " operation=" + operator + " output=" + output)
 
-console.log("num1=" + num1 + " num2=" + num2 + " operation=" + operation + " output="/* + output*/)
+} else {output = "Please input 2 numbers"}
+
+document.getElementById("result").textContent = String(output)
+
 
 }
