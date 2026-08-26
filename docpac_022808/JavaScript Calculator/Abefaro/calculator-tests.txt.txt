@@ -1,0 +1,58 @@
+Test 1
+First value: 4
+Operation: +
+Second value: 3
+Expected: 7
+Actual: 7
+Result: Pass
+
+Test 2
+First value: 5
+Operation: -
+Second value: 3
+Expected: 2
+Actual: 2
+Result: Pass
+
+Test 3
+First value: 5
+Operation: *
+Second value: 3
+Expected: 15
+Actual: 15
+Result: Pass
+
+Test 4
+First value: 6
+Operation: /
+Second value: 3
+Expected: 2
+Actual: 2
+Result: Pass
+
+Test 5
+First value: 6
+Operation: %
+Second value: 3
+Expected: 0
+Actual: 0
+Result: Pass
+
+Test 6 
+First value: 10
+Operation: /
+Second value: 4
+Expected: 2.5
+Actual: 2.5
+Result: Pass
+
+Test 7
+First value: 4
+Operation: /
+Second value: 0
+Expected: Error!
+Actual: Error!
+Result: Pass
+
+
+
