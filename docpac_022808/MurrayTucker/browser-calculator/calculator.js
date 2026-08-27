@@ -1,28 +1,48 @@
 function calculate() {
     const resultElement = document.getElementById("result");
-    const number1Value  = document.getElementById("number1").value;
-    const number2Value  = document.getElementById("number2").value;
-    const operatorValue = document.getElementById("operation").value;
+    const number1Input  = document.getElementById("number1");
+    const number2Input  = document.getElementById("number2");
+    const operatorInput = document.getElementById("operation");
 
+    const number1Value = number1Input.value;
+    const number2Value = number2Input.value;
+    const operatorValue = operatorInput.value;
+    
+    if (!number1Value || !number2Value) {
+        resultElement.innerHTML = "Please enter two numbers.";
+        return;
+    }
+    
     const number1 = Number(number1Value);
     const number2 = Number(number2Value);
-
-    let result = "ERROR: Unknown";
+    
+    let result = "Unknown Error";
     switch (operatorValue) {
-        case "addition": 
+        case "+": 
             result = String(number1 + number2);
             break;
-        case "subtraction":
+        case "-":
             result = String(number1 - number2);
-        case "multiplication":
-
-        case "division":
+            break;
+        case "*":
+            result = String(number1 * number2);
+            break;
+        case "/":
             if (number2 === 0) {
-                result = "ERROR: Divide by zero";
+                result = "Error!";
             }
             else {
                 result = String(number1 / number2);
             }
             break;
+        case "%":
+            if (number2 === 0) {
+                result = "Error!";
+            }
+            else {
+                result = String(number1 % number2);
+            }
+            break;
     }
+    resultElement.innerHTML = result;
 }
