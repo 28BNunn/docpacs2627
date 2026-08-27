@@ -1,0 +1,11 @@
+{
+  "name": "abefaro",
+  "version": "1.0.0",
+  "description": "Learning Node.js packages",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Abe",
+  "license": "ISC"
+}
