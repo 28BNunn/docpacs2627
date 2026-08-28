@@ -1,0 +1,11 @@
+{
+  "name": "u1l1",
+  "version": "1.0.0",
+  "description": "Unit 1, Lesson 1 Submission",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tucker Murray",
+  "license": "MIT"
+}
