@@ -11,9 +11,8 @@
   "description": "",
   "dependencies": {
     "dotenv": "^17.4.2"
-
   },
   "devDependencies": {
-    "Nodemon": "^3.1.14"
+    "nodemon": "^3.1.14"
   }
 }

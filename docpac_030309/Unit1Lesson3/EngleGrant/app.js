@@ -1,1 +1,3 @@
-console.log("doofenshmirtz machine 3000")
+require('dotenv').config()
+
+console.log(` ${process.env.DOOF}`);
