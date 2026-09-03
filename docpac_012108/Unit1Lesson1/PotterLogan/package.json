@@ -1,0 +1,11 @@
+{
+  "name": "unit1lesson1",
+  "version": "1.0.0",
+  "description": "Bare Minimum Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo test"
+  },
+  "author": "Logan P",
+  "license": "ISC"
+}
