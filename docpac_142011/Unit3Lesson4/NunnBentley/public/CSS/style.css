@@ -1,0 +1,20 @@
+body {
+    color: red
+}
+
+h1 {
+    color: pink
+}
+
+.error {
+    color: darkred;
+    font-weight: bold;
+}
+
+.inline-form {
+    display: inline;
+}
+
+form div {
+    margin-bottom: 0.5rem;
+}

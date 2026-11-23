@@ -1,0 +1,16 @@
+<%- include('partials/header') %>
+
+<h1>Welcome, <%= account.displayName || account.username %>!</h1>
+
+<ul>
+    <li><strong>Username:</strong> <%= account.username %></li>
+    <li><strong>Email:</strong> <%= account.email %></li>
+    <li><strong>Display name:</strong> <%= account.displayName || '(not set)' %></li>
+    <li><strong>Account created:</strong> <%= account.createdAt %></li>
+</ul>
+
+<form action="/logout" method="post">
+    <button type="submit">Log out</button>
+</form>
+
+<%- include('partials/footer') %>

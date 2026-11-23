@@ -1,0 +1,39 @@
+<%- include('partials/header') %>
+
+<h1><%= heading %></h1>
+<p>Use a made-up classroom password. Never use a real password from another site.</p>
+
+<% if (error) { %>
+    <p class="error"><%= error %></p>
+<% } %>
+
+<form action="/register" method="post">
+    <div>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" value="<%= values.username || '' %>"
+               required minlength="3" maxlength="30" pattern="[A-Za-z0-9_]+" autocomplete="username">
+    </div>
+    <div>
+        <label for="email">Email address</label>
+        <input type="email" id="email" name="email" value="<%= values.email || '' %>"
+               required maxlength="254" autocomplete="email">
+    </div>
+    <div>
+        <label for="displayName">Display name (optional)</label>
+        <input type="text" id="displayName" name="displayName" value="<%= values.displayName || '' %>"
+               maxlength="50">
+    </div>
+    <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required minlength="6" autocomplete="new-password">
+    </div>
+    <div>
+        <label for="repeatPassword">Repeat password</label>
+        <input type="password" id="repeatPassword" name="repeatPassword" required minlength="6" autocomplete="new-password">
+    </div>
+    <button type="submit">Register</button>
+</form>
+
+<p>Already have an account? <a href="/login">Log in</a></p>
+
+<%- include('partials/footer') %>
